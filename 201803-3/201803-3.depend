@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1535946551 source:c:\users\hust_ning\desktop\c\ccf-csp\201803-3\main.c
+	<stdio.h>
+	<ctype.h>
+
