@@ -1,125 +1,160 @@
-#include <iostream>
-#include <vector>
+#include<iostream>
+#include<vector>
 using namespace std;
+
 #define Q 1000000007
 
-bool dfs_add(vector<int> &a, vector<vector<int> > &adj, int u, int v, int d, int parents)//dfs(u)
+int dfs_sum(vector<vector<int> > &adj, int u, vector<bool> &travel_flag, int L, int R, int i, vector<int> & weight)
 {
-	if (u == v)
-	{
-		a[u] += d;
-		a[u] %= Q;
-		return true;
-	}
-	else
-	{
-		int x;
-		for (/*auto i : adj[u]*/x = 0; x < adj[u].size(); x++)
-		{
-			int i = adj[u][x];
-			if (i == parents)continue;
-			if (dfs_add(a, adj, i, v, d, u))
-			{
-				a[u] += d;
-				a[u] %= Q;
-				return true;
-			}
-		}
-		return false;
-	}
-}
-
-void add(vector<int> &a, vector<vector<int> > &adj, int u, int v, int d)
-{
-	dfs_add(a, adj, u, v, d, u);
-}
-
-int dfs_sum(vector<vector<int> > &adj, int u, vector<bool> &travel_flag, int L, int R, int i, vector<int> &weight)//start with u, return the times collected
-{
-	if (travel_flag[u])//only can be dfs(parents)
+	if (travel_flag[u])
 	{
 		if (i - 1 >= L && i - 1 <= R)
-		{
 			return 1;
-		}
 		else return 0;
 	}
+	else if (i > R)
+		return 0;
 	else
 	{
 		int collect = 0;
 		travel_flag[u] = true;
-		int x;
-		for (/*auto v : adj[u]*/x = 0; x < adj[u].size(); x++)
+		for (vector<int>::iterator x = adj[u].begin(); x != adj[u].end(); ++x)
 		{
-			int v = adj[u][x];
-			collect += dfs_sum(adj, v, travel_flag, L, R, i + 1, weight);
+			collect += dfs_sum(adj, *x, travel_flag, L, R, i + 1, weight);
 		}
 		weight[u] += collect;
 		return collect;
 	}
 }
 
-int sum(vector<int> &a, vector<int> &weight)
-{
-	int sum = 0, i, j;
-	for (i = 0; i < a.size(); i++)
-		for (j = 0; j < weight[i]; j++)
-		{
-			sum += a[i];
-			sum %= Q;
-		}
-	return sum;
-}
-
-
-
 int main()
 {
 	int T;
 	cin >> T;
-	int i;
-	for (i = 0; i < T; i++)
+	for (int i = 0; i < T; i++)
 	{
 		int n, m, L, R;
-		int u, v, d;
-		int i, j;
+		cin >> n >> m >> L >> R;
 		vector<int> a;
 		vector<int> inadj;
-		cin >> n >> m >> L >> R;
-		vector<vector<int> > adj(n, vector<int>());
+		vector<vector<int> > adj(n);
 		vector<int> weight(n, 0);
-		for (j = 0; j < n; j++)
+		for (int i = 0; i < n; i++)
 		{
 			int w;
 			cin >> w;
 			a.push_back(w);
 		}
-		for (j = 0; j < n - 1; j++)
+		for (int i = 0; i < n - 1; i++)
 		{
 			int tmp;
 			cin >> tmp;
 			inadj.push_back(tmp - 1);
 		}
-		for (j = 0; j < n - 1; j++)
+		for (int i = 0; i < n - 1; i++)
 		{
-			adj[j + 1].push_back(inadj[j]);
-			adj[inadj[j]].push_back(j + 1);
+			adj[i + 1].push_back(inadj[i]);
+			adj[inadj[i]].push_back(i + 1);
 		}
-		for (u = 0; u < n; u++)
+		for (int u = 0; u < n; u++)
 		{
 			vector<bool> travel_flag(n, false);
 			dfs_sum(adj, u, travel_flag, L, R, 1, weight);
 		}
-		for (u = 0; u < n; u++)
-		{
+		for (int u = 0; u < n; u++)
 			weight[u] /= 2;
-		}
-		for (i = 0; i < m; i++)
+		int sumVal = 0;
+		for (int u = 0; u < n; u++)
 		{
+			int t = weight[u];
+			int e = a[u];
+			while (t != 0)
+			{
+				sumVal += (t % 2) * e;
+				sumVal %= Q;
+				t = t / 2;
+				e = e * 2;
+				e %= Q;
+			}
+		}
+		vector<int>depth;
+		depth.push_back(0);
+		for (int i = 0; i < n - 1; i++)
+		{
+			depth.push_back(depth[inadj[i]] + 1);
+		}
+		for (int i = 0; i < m; i++)
+		{
+			int u, v, d;
 			cin >> u >> v >> d;
-			u -= 1, v -= 1;
-			add(a, adj, u, v, d);
-			cout << sum(a, weight) << endl;
+			u -= 1;
+			v -= 1;
+			int du = depth[u];
+			int dv = depth[v];
+			for (int j = 0; j < du - dv; j++)
+			{
+				int t = weight[u];
+				int e = d;
+				while (t != 0)
+				{
+					sumVal += (t % 2) * e;
+					sumVal %= Q;
+					t = t / 2;
+					e = 2 * e;
+					e %= Q;
+				}
+				u = inadj[u - 1];
+			}
+			for (int j = 0; j < dv - du; j++)
+			{
+				int t = weight[v];
+				int e = d;
+				while (t != 0)
+				{
+					sumVal += (t % 2) * e;
+					sumVal %= Q;
+					t = t / 2;
+					e = 2 * e;
+					e %= Q;
+				}
+				v = inadj[v - 1];
+			}
+			while (u != v)
+			{
+				int t = weight[u];
+				int e = d;
+				while (t != 0)
+				{
+					sumVal += (t % 2) * e;
+					sumVal %= Q;
+					t = t / 2;
+					e = 2 * e;
+					e %= Q;
+				}
+				u = inadj[u - 1];
+				t = weight[v];
+				e = d;
+				while (t != 0)
+				{
+					sumVal += (t % 2) * e;
+					sumVal %= Q;
+					t = t / 2;
+					e = 2 * e;
+					e %= Q;
+				}
+				v = inadj[v - 1];
+			}
+			int t = weight[u];
+			int e = d;
+			while (t != 0)
+			{
+				sumVal += (t % 2) * e;
+				sumVal %= Q;
+				t = t / 2;
+				e = 2 * e;
+				e %= Q;
+			}
+			cout << sumVal << endl;
 		}
 	}
 	return 0;

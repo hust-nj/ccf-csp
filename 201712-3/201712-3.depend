@@ -1,0 +1,8 @@
+# depslib dependency file v1.0
+1536515104 source:c:\users\hust_ning\desktop\c\ccf-csp\201712-3\main.cpp
+	<iostream>
+	<string>
+	<vector>
+	<cstdio>
+	<algorithm>
+
