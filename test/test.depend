@@ -1,9 +1,5 @@
 # depslib dependency file v1.0
-1536291599 source:c:\users\hust_ning\desktop\c\ccf-csp\test\main.cpp
+1539843997 source:c:\users\hust_ning\desktop\c\ccf-csp\test\main.cpp
 	<iostream>
-	<list>
-	<vector>
-	<string>
-	<algorithm>
-	<numeric>
+	<typeinfo>
 

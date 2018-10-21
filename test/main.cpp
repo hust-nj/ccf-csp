@@ -1,19 +1,17 @@
-#include <iostream>
-#include <list>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <numeric>
+#include<iostream>
+#include<typeinfo>
 using namespace std;
+
+
+template<typename T>
+struct A{
+    void f();
+};
+template<typename T>
+void A<T>::f(){cout << typeid(A<T>).name() << endl;}
 
 int main()
 {
-    string a{"2141"};
-    cout << *a.erase(a.begin()) << endl;
-    string b{"xyz"};
-    a.append(b);
-    cout << a << endl;
-    a.insert(a.begin(), string("some"));
-    return 0;
-
+    A<int> a;
+    a.f();
 }
