@@ -81,7 +81,7 @@ int main()
         return 0;
     }
     vector<int> new_price(n);
-    vector<vector<vector<int> > > table(n, vector<vector<int> > (300, vector<int>(300, 0)));//n * 101 * 101
+    vector<vector<vector<int> > > table(n, vector<vector<int> > (300, vector<int>(300, 0)));//n * 300* 300
     srch(table, new_price, init_price);
     for(vector<int>::iterator p = new_price.begin(); p != new_price.end(); ++p)
     {
